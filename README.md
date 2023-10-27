@@ -19,11 +19,14 @@ Transcription, tokenization, etc. of the audio files are done by the create_data
 
 data_dir
 ├── bpe_69.json
-├── utt1.wav
-├── utt2.wav
-├── utt3.wav
+├── utt1
+  └── 1.wav
+  └── 2.wav
+├── utt2
+  └── 1.wav
+  └── 2.wav
 ......
-└── utt{n}.wav
+└── utt{n}
 '''
 
 data_dir = "your data_dir"
