@@ -33,7 +33,7 @@ def make_prompts(data_dir, name, audio_prompt_path, transcript=None):
         with open(audio_ann_sum_backup, 'r', encoding='utf-8') as f:
             for line in f:
                 stem = line.split('|')[0]
-                text_pr = [line.split('|')[3]]
+                text_pr = line.split('|')[3]
                 existing_stems.add(stem)
                 backup_data[stem] = {
                     'text_pr':text_pr,
