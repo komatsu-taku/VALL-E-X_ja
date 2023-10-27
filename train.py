@@ -25,7 +25,9 @@ python3 bin/trainer.py \
     --exp-dir exp/valle
     --dtype "bfloat16" \
 """
-
+import pathlib
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 import argparse
 import copy
 import logging
@@ -259,12 +261,12 @@ def get_parser():
     
     parser.add_argument(
         "--train_dir",
-        default='./customs/test_data'
+        default='MyTTSDataset/small'
     )
     
     parser.add_argument(
         "--valid_dir",
-        default='./customs/test_data'
+        default='MyTTSDataset/small'
     )
 
     add_model_arguments(parser)
