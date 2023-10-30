@@ -25,3 +25,5 @@ vocos
 tensorboard
 h5py
 torchmetrics
+py7zr
+gdown
