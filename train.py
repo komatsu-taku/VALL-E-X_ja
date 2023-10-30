@@ -220,7 +220,7 @@ def get_parser():
     parser.add_argument(
         "--dtype",
         type=str,
-        default="float32",
+        default="bfloat16",
         help="Training dtype: float32 bfloat16 float16.",
     )
 
@@ -261,12 +261,12 @@ def get_parser():
     
     parser.add_argument(
         "--train_dir",
-        default='JS_Dataset/JS_Dataset/train_tune'
+        default='MyTTSDataset/train_tune'
     )
     
     parser.add_argument(
         "--valid_dir",
-        default='JS_Dataset/JS_Dataset/valid_tune'
+        default='MyTTSDataset/valid_tune'
     )
 
     add_model_arguments(parser)

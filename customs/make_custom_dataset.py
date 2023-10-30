@@ -78,5 +78,5 @@ def create_dataset(data_dir, dataloader_process_only):
                 except Exception as e:
                     print(f"An error occurred: {e}")
     else:
-        dataloader = create_dataloader(data_dir=data_dir, max_size=20, max_duration=120)
+        dataloader = create_dataloader(data_dir=data_dir, max_size=10, max_duration=60)
         return dataloader

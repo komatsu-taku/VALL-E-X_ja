@@ -1,4 +1,6 @@
 MyTTSDataset/
 checkpoints/
 exp/
+exp2/
 whisper/
+JS_Dataset/JS_Dataset
