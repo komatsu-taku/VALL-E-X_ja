@@ -261,12 +261,12 @@ def get_parser():
     
     parser.add_argument(
         "--train_dir",
-        default='MyTTSDataset/small_tune'
+        default='JS_Dataset/train_tune'
     )
     
     parser.add_argument(
         "--valid_dir",
-        default='MyTTSDataset/small_tune'
+        default='JS_Dataset/valid_tune'
     )
 
     add_model_arguments(parser)
