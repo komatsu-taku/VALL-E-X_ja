@@ -5,7 +5,7 @@ import numpy as np
 import os
 import torchaudio
 import soundfile as sf
-from tqdm.auto import tqdm
+from tqdm.notebook import tqdm
 from utils.g2p.symbols import symbols
 from utils.g2p import PhonemeBpeTokenizer
 from utils.prompt_making import make_prompt, make_transcript
@@ -81,7 +81,7 @@ def create_dataset(data_dir, dataloader_process_only):
         # Create or open an HDF5 file
         with h5py.File(h5_output_path, 'w') as h5_file:
             # Loop through each audio and text file, assuming they have the same stem
-            for audio_path in tqdm(audio_paths):
+            for audio_path in audio_paths:
                 try:
                     stem = os.path.splitext(os.path.basename(audio_path))[0]
                     audio_tokens, text_tokens, langs, text = make_prompts(data_dir=data_dir, name=stem, audio_prompt_path=audio_path)
@@ -100,5 +100,5 @@ def create_dataset(data_dir, dataloader_process_only):
                 except Exception as e:
                     print(f"An error occurred: {e}")
     else:
-        dataloader = create_dataloader(data_dir=data_dir)
+        dataloader = create_dataloader(data_dir=data_dir, max_size=20, max_duration=120)
         return dataloader

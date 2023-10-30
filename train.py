@@ -26,8 +26,8 @@ python3 bin/trainer.py \
     --dtype "bfloat16" \
 """
 import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
+# temp = pathlib.PosixPath
+# pathlib.PosixPath = pathlib.WindowsPath
 import argparse
 import copy
 import logging
@@ -220,7 +220,7 @@ def get_parser():
     parser.add_argument(
         "--dtype",
         type=str,
-        default="float32",
+        default="bfloat16",
         help="Training dtype: float32 bfloat16 float16.",
     )
 
@@ -248,7 +248,7 @@ def get_parser():
     parser.add_argument(
         "--visualize",
         type=str2bool,
-        default=False,
+        default=True,
         help="visualize model results in eval step.",
     )
 
@@ -261,12 +261,12 @@ def get_parser():
     
     parser.add_argument(
         "--train_dir",
-        default='MyTTSDataset/small'
+        default='MyTTSDataset/train'
     )
     
     parser.add_argument(
         "--valid_dir",
-        default='MyTTSDataset/small'
+        default='MyTTSDataset/valid'
     )
 
     add_model_arguments(parser)
@@ -314,9 +314,9 @@ def get_params() -> AttributeDict:
             "best_train_epoch": -1,
             "best_valid_epoch": -1,
             "batch_idx_train": 0,
-            "log_interval": 100,  # 10: debug 100: train
+            "log_interval": 10,  # 10: debug 100: train
             "reset_interval": 200,
-            "valid_interval": 10000,
+            "valid_interval": 10, # 10: debug 10000 : train
         }
     )
 

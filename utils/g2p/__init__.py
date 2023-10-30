@@ -10,7 +10,7 @@ _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 
 class PhonemeBpeTokenizer:
   def __init__(self, tokenizer_path):
-    self.tokenizer = Tokenizer.from_file(r"C:\Users\BBS\code\VALL-E-X-Trainer-by-CustomData\utils\g2p\bpe_69.json")
+    self.tokenizer = Tokenizer.from_file("utils/g2p/bpe_69.json")
 
   def tokenize(self, text):
     # 1. convert text to phoneme

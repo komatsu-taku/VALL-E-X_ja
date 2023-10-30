@@ -12,6 +12,15 @@ from models.vallex import VALLE
 if torch.cuda.is_available():
     device = torch.device("cuda", 0)
 from vocos import Vocos
+from pathlib import Path
+import platform
+import pathlib
+
+plt = platform.system()
+print("Operating System:", plt)
+
+if plt == 'Linux':
+    pathlib.WindowsPath = pathlib.PosixPath
 
 def get_model(device):
     url = 'https://huggingface.co/Plachta/VALL-E-X/resolve/main/vallex-checkpoint.pt'
@@ -47,7 +56,9 @@ def get_model(device):
         prepend_bos=True,
         num_quantizers=NUM_QUANTIZERS,
     ).to(device)
-    checkpoint = torch.load(os.path.join(checkpoints_dir, model_checkpoint_name), map_location='cpu')
+    checkpoint_path = Path(checkpoints_dir) / model_checkpoint_name
+    checkpoint = torch.load(checkpoint_path, map_location='cpu')
+    # checkpoint = torch.load(os.path.join(checkpoints_dir, model_checkpoint_name), map_location='cpu')
     missing_keys, unexpected_keys = model.load_state_dict(
         checkpoint["model"], strict=True
     )

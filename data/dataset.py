@@ -230,7 +230,7 @@ def collate(batch):
     }
     return batch
 
-def create_dataloader(data_dir="/root/valle/egs/mix", n_gpus=1, rank=0, num_workers=0, num_buckets=10, max_duration=120):
+def create_dataloader(data_dir="/root/valle/egs/mix", n_gpus=1, rank=0, num_workers=0, num_buckets=10, max_size=20, max_duration=120):
     import os
     from glob import glob
     train_datasets = []
@@ -247,7 +247,7 @@ def create_dataloader(data_dir="/root/valle/egs/mix", n_gpus=1, rank=0, num_work
             rank=rank,
             shuffle=True,
         )
-    dynamic_sampler = DynamicBatchSampler(ran_sampler, train_dataset.get_dur, num_buckets=num_buckets, max_size=20,
+    dynamic_sampler = DynamicBatchSampler(ran_sampler, train_dataset.get_dur, num_buckets=num_buckets, max_size=max_size,
                                           max_tokens=max_duration)
 
 

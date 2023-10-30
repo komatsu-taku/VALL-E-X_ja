@@ -8,6 +8,15 @@ from data.tokenizer import (
 )
 from models.vallex import VALLE
 from vocos import Vocos
+from pathlib import Path  # 修改這裡
+import platform
+import pathlib
+
+plt = platform.system()
+print("Operating System:", plt)
+
+if plt == 'Linux':
+    pathlib.WindowsPath = pathlib.PosixPath
 
 def get_model(device):
     url = 'https://huggingface.co/Plachta/VALL-E-X/resolve/main/vallex-checkpoint.pt'
@@ -15,6 +24,7 @@ def get_model(device):
     checkpoints_dir = "./checkpoints"
 
     model_checkpoint_name = "vallex-checkpoint_modified.pt"
+
     if not os.path.exists(checkpoints_dir): os.mkdir(checkpoints_dir)
     if not os.path.exists(os.path.join(checkpoints_dir, model_checkpoint_name)):
         import wget
@@ -22,9 +32,7 @@ def get_model(device):
         try:
             logging.info(
                 "Downloading model from https://huggingface.co/Plachta/VALL-E-X/resolve/main/vallex-checkpoint.pt ...")
-            # download from https://huggingface.co/Plachta/VALL-E-X/resolve/main/vallex-checkpoint.pt to ./checkpoints/vallex-checkpoint.pt
-            wget.download("https://huggingface.co/Plachta/VALL-E-X/resolve/main/vallex-checkpoint.pt",
-                          out="./checkpoints/vallex-checkpoint.pt", bar=wget.bar_adaptive)
+            wget.download(url, out=os.path.join(checkpoints_dir, model_checkpoint_name), bar=wget.bar_adaptive)
         except Exception as e:
             logging.info(e)
             raise Exception(
@@ -43,7 +51,9 @@ def get_model(device):
         prepend_bos=True,
         num_quantizers=NUM_QUANTIZERS,
     ).to(device)
-    checkpoint = torch.load(os.path.join(checkpoints_dir, model_checkpoint_name), map_location='cpu')
+
+    checkpoint_path = Path(checkpoints_dir) / model_checkpoint_name  # 修改這裡
+    checkpoint = torch.load(checkpoint_path, map_location='cpu')
     missing_keys, unexpected_keys = model.load_state_dict(
         checkpoint["model"], strict=True
     )
