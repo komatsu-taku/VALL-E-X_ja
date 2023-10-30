@@ -135,10 +135,9 @@ class AudioDataset(torch.utils.data.Dataset):
     def __init__(self, h5_path, ann_path, tokenizer_path):
         self.h5_path = h5_path
         with open(ann_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-        ls = [l.split("|") for l in lines]
+            lines = [line.strip() for line in f if line.strip()]
+        ls = [line.split("|") for line in lines]
         ls_T = list(zip(*ls))
-        #del ls_T[-1]
         self.h5_paths, self.durations, self.langs, self.texts = \
             list(ls_T[0]), list(ls_T[1]), list(ls_T[2]), list(ls_T[3])
         self.durations = [float(dur) for dur in self.durations]
@@ -230,24 +229,17 @@ def collate(batch):
     }
     return batch
 
-def create_dataloader(data_dir="/root/valle/egs/mix", n_gpus=1, rank=0, num_workers=0, num_buckets=10, max_size=20, max_duration=120):
-    import os
-    from glob import glob
-    train_datasets = []
-    data_dirs = glob(f"{data_dir}/*/audio_sum.hdf5")
-    for dir in data_dirs:
-        dir = os.path.dirname(dir)
-        train_dataset = AudioDataset(h5_path=f"{dir}/audio_sum.hdf5",
-                                    ann_path=f"{dir}/audio_ann_sum.txt",
-                                    tokenizer_path=f"{data_dir}/bpe_69.json")
-        train_datasets.append(train_dataset)
+def create_dataloader(data_dir="/root/valle/egs/mix", n_gpus=1, rank=0, num_workers=0, num_buckets=10, max_duration=120):
+    train_dataset = AudioDataset(h5_path=f"{data_dir}/audio_sum.hdf5",
+                                 ann_path=f"{data_dir}/audio_ann_sum.txt",
+                                 tokenizer_path=f"{data_dir}/bpe_69.json")
     ran_sampler = torch.utils.data.distributed.DistributedSampler(
-            train_datasets,
+            train_dataset,
             num_replicas=n_gpus,
             rank=rank,
             shuffle=True,
         )
-    dynamic_sampler = DynamicBatchSampler(ran_sampler, train_dataset.get_dur, num_buckets=num_buckets, max_size=max_size,
+    dynamic_sampler = DynamicBatchSampler(ran_sampler, train_dataset.get_dur, num_buckets=num_buckets, max_size=20,
                                           max_tokens=max_duration)
 
 

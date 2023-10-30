@@ -22,3 +22,6 @@ nltk
 sudachipy
 sudachidict_core
 vocos
+tensorboard
+h5py
+torchmetrics

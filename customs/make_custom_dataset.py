@@ -5,7 +5,6 @@ import numpy as np
 import os
 import torchaudio
 import soundfile as sf
-from tqdm.notebook import tqdm
 from utils.g2p.symbols import symbols
 from utils.g2p import PhonemeBpeTokenizer
 from utils.prompt_making import make_prompt, make_transcript
@@ -24,21 +23,7 @@ tokenizer_path = "./utils/g2p/bpe_69.json"
 tokenizer = PhonemeBpeTokenizer(tokenizer_path)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def make_prompts(data_dir, name, audio_prompt_path, transcript=None):
-    # 读取已经存在的stems
-    audio_ann_sum_backup = r"MyTTSDataset\wavs\audio_ann_sum_backup.txt"
-    existing_stems = set()
-    backup_data = {}
-    if os.path.exists(audio_ann_sum_backup):
-        with open(audio_ann_sum_backup, 'r', encoding='utf-8') as f:
-            for line in f:
-                stem = line.split('|')[0]
-                text_pr = line.split('|')[3].replace('\n','')
-                existing_stems.add(stem)
-                backup_data[stem] = {
-                    'text_pr':text_pr,
-                }
-
+def make_prompts(name, audio_prompt_path, transcript=None):
     text_tokenizer = PhonemeBpeTokenizer(tokenizer_path="./utils/g2p/bpe_69.json")
     text_collater = get_text_token_collater()
     codec = AudioTokenizer(device)
@@ -48,14 +33,7 @@ def make_prompts(data_dir, name, audio_prompt_path, transcript=None):
         raise ValueError(f"Prompt too long, expect length below 15 seconds, got {wav_pr / sr} seconds.")
     if wav_pr.size(0) == 2:
         wav_pr = wav_pr.mean(0, keepdim=True)
-
-    if name in existing_stems:
-        # print(f"{name} already exists in {audio_ann_sum_backup}, copying data to {name}.")
-        # Read from backup and write to ann_output_path
-        text_pr = backup_data[name]['text_pr']
-
-    else:
-        text_pr, lang_pr = make_transcript(name, wav_pr, sr, transcript)
+    text_pr, lang_pr = make_transcript(name, wav_pr, sr, transcript)
 
     # tokenize audio
     encoded_frames = tokenize_audio(codec, (wav_pr, sr))
