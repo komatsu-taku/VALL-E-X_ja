@@ -36,6 +36,13 @@ create_dataset(data_dir, dataloader_process_only=True)
 # When Training 
 When training, please specify data_dir for training data and data_dir for validation data as "--train_dir" and "--valid_dir" as arguments on the command line.
 
+## Vram setting 
+`customs\make_custom_dataset.py`
+```
+dataloader = create_dataloader(data_dir=data_dir, max_size=20, max_duration=120)
+- max_size
+- max_duration
+```
 
 ## Original README
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/qCBRmAnTxg)
