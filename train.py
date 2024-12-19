@@ -785,7 +785,7 @@ def train_one_epoch(
 
             if is_wandb:
                 wandb.log({
-                    "Epoch": params.cur_eposh,
+                    "Epoch": params.cur_epoch,
                     "Train loss": tot_loss
                 })
 
