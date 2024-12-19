@@ -24,7 +24,7 @@ tokenizer = PhonemeBpeTokenizer(tokenizer_path)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def make_prompts(name, audio_prompt_path, transcript=None):
-    text_tokenizer = PhonemeBpeTokenizer(tokenizer_path="./utils/g2p/bpe_69.json")
+    text_tokenizer = PhonemeBpeTokenizer(tokenizer_path="./utils/g2p/bpe_1024.json")
     text_collater = get_text_token_collater()
     codec = AudioTokenizer(device)
     wav_pr, sr = torchaudio.load(audio_prompt_path)
@@ -49,34 +49,68 @@ def make_prompts(name, audio_prompt_path, transcript=None):
 
     return audio_tokens, text_tokens, langs, text_pr
     
+# def create_dataset(data_dir, dataloader_process_only):
+#     if dataloader_process_only:
+#         h5_output_path=f"{data_dir}/audio_sum.hdf5"
+#         ann_output_path=f"{data_dir}/audio_ann_sum.txt"
+#         #audio_folder = os.path.join(data_dir, 'audio')
+#         audio_paths = glob.glob(f"{data_dir}/*.wav")  # Change this to match your audio file extension
+
+#         # Create or open an HDF5 file
+#         with h5py.File(h5_output_path, 'w') as h5_file:
+#             # Loop through each audio and text file, assuming they have the same stem
+#             for audio_path in audio_paths:
+#                 try:
+#                     stem = os.path.splitext(os.path.basename(audio_path))[0]
+#                     audio_tokens, text_tokens, langs, text = make_prompts(data_dir=data_dir, name=stem, audio_prompt_path=audio_path)
+                    
+#                     text_tokens = text_tokens.squeeze(0)
+#                     # Create a group for each stem
+#                     grp = h5_file.create_group(stem)
+#                     # Add audio and text tokens as datasets to the group
+#                     grp.create_dataset('audio', data=audio_tokens)
+#                     #grp.create_dataset('text', data=text_tokens)
+                    
+#                     with open(ann_output_path, 'a', encoding='utf-8') as ann_file:
+#                         audio, sample_rate = sf.read(audio_path)
+#                         duration = len(audio) / sample_rate
+#                         ann_file.write(f'{stem}|{duration}|{langs[0]}|{text}\n')  # 改行を追加
+#                 except Exception as e:
+#                     print(f"An error occurred: {e}")
+#     else:
+#         dataloader = create_dataloader(data_dir=data_dir, max_size=10, max_duration=60)
+#         return dataloader
+
 def create_dataset(data_dir, dataloader_process_only):
     if dataloader_process_only:
-        h5_output_path=f"{data_dir}/audio_sum.hdf5"
-        ann_output_path=f"{data_dir}/audio_ann_sum.txt"
-        #audio_folder = os.path.join(data_dir, 'audio')
-        audio_paths = glob.glob(f"{data_dir}/*.wav")  # Change this to match your audio file extension
+        h5_output_path = f"{data_dir}/audio_sum.hdf5"
+        ann_output_path = f"{data_dir}/audio_ann_sum.txt"
+        audio_paths = glob.glob(f"{data_dir}/*.wav")
+
+        if not audio_paths:
+            print("No audio files found in the specified directory.")
+            return
 
         # Create or open an HDF5 file
         with h5py.File(h5_output_path, 'w') as h5_file:
-            # Loop through each audio and text file, assuming they have the same stem
             for audio_path in audio_paths:
                 try:
                     stem = os.path.splitext(os.path.basename(audio_path))[0]
-                    audio_tokens, text_tokens, langs, text = make_prompts(data_dir=data_dir, name=stem, audio_prompt_path=audio_path)
-                    
+                    # Corrected function call
+                    audio_tokens, text_tokens, langs, text = make_prompts(name=stem, audio_prompt_path=audio_path)
+
                     text_tokens = text_tokens.squeeze(0)
-                    # Create a group for each stem
                     grp = h5_file.create_group(stem)
-                    # Add audio and text tokens as datasets to the group
                     grp.create_dataset('audio', data=audio_tokens)
-                    #grp.create_dataset('text', data=text_tokens)
-                    
+
                     with open(ann_output_path, 'a', encoding='utf-8') as ann_file:
                         audio, sample_rate = sf.read(audio_path)
                         duration = len(audio) / sample_rate
-                        ann_file.write(f'{stem}|{duration}|{langs[0]}|{text}\n')  # 改行を追加
+                        ann_file.write(f'{stem}|{duration}|{langs[0]}|{text}\n')
                 except Exception as e:
-                    print(f"An error occurred: {e}")
+                    print(f"An error occurred while processing {audio_path}: {e}")
+                    import traceback
+                    traceback.print_exc()
     else:
         dataloader = create_dataloader(data_dir=data_dir, max_size=10, max_duration=60)
         return dataloader

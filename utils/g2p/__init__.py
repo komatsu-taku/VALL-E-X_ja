@@ -10,10 +10,13 @@ _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 
 class PhonemeBpeTokenizer:
   def __init__(self, tokenizer_path):
+    self.tokenizer_path = tokenizer_path
     self.tokenizer = Tokenizer.from_file("utils/g2p/bpe_69.json")
 
   def tokenize(self, text):
     # 1. convert text to phoneme
+    if not text.startswith("[JA]") and not text.endswith("[JA]"):
+        text = f"[JA]{text}[JA]"
     phonemes, langs = _clean_text(text, ['cje_cleaners'])
     # 2. replace blank space " " with "_"
     phonemes = phonemes.replace(" ", "_")
