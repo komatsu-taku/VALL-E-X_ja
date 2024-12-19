@@ -552,7 +552,7 @@ def compute_validation_loss(
     model: Union[nn.Module, DDP],
     valid_dl: torch.utils.data.DataLoader,
     world_size: int = 1,
-    wandb: bool = False,
+    is_wandb: bool = False,
 ) -> MetricsTracker:
     """Run the validation process."""
     tot_loss = MetricsTracker()
@@ -573,7 +573,7 @@ def compute_validation_loss(
         params.best_valid_epoch = params.cur_epoch
         params.best_valid_loss = loss_value
 
-    if wandb:
+    if is_wandb:
         wandb.log({
             "Epoch": params.cur_eposh,
             "Valid Loss": tot_loss['loss']
@@ -605,7 +605,7 @@ def train_one_epoch(
     tb_writer: Optional[SummaryWriter] = None,
     world_size: int = 1,
     rank: int = 0,
-    wandb: bool = False,
+    is_wandb: bool = False,
 ) -> None:
     """Train the model for one epoch.
 
@@ -783,7 +783,7 @@ def train_one_epoch(
                 )
             )
 
-            if wandb:
+            if is_wandb:
                 wandb.log({
                     "Epoch": params.cur_eposh,
                     "Train loss": tot_loss
@@ -821,7 +821,7 @@ def train_one_epoch(
                     model=model,
                     valid_dl=valid_dl,
                     world_size=world_size,
-                    wandb=wandb
+                    is_wandb=is_wandb
                 )
             logging.info(
                 f"Epoch {params.cur_epoch}, validation: {valid_info}"
@@ -1026,7 +1026,7 @@ def run(rank, world_size, args):
             tb_writer=tb_writer,
             world_size=world_size,
             rank=rank,
-            wandb=args.wandb
+            is_wandb=args.wandb
         )
 
         save_checkpoint(
