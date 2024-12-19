@@ -863,6 +863,9 @@ def run(rank, world_size, args):
     if world_size > 1:
         setup_dist(rank, world_size, params.master_port)
 
+    if args.is_wandb:
+        wandb.init(project="VALLE")
+
     setup_logger(f"{params.exp_dir}/log/log-train")
     logging.info("Training started")
 
