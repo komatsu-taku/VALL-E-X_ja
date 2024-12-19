@@ -92,8 +92,8 @@ def main(args: argparse.Namespace):
     # 出力ディレクトリを作成
     os.makedirs(output_dir, exist_ok=True)
 
-    # 音声ファイルリストを取得し、最初の10ファイルを選択
-    wav_files = sorted([f for f in os.listdir(os.path.join(input_dir, "wav")) if f.endswith(".wav")])[:10]
+    # 音声ファイルリストを取得
+    wav_files = sorted([f for f in os.listdir(os.path.join(input_dir, "wav")) if f.endswith(".wav")])
 
     # トランスクリプトの読み込み
     with open(transcript_path, 'r', encoding='utf-8') as transcript_file:
